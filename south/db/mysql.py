@@ -178,8 +178,12 @@ class DatabaseOperations(generic.DatabaseOperations):
         e.g. which storage engine (MySQL) or transaction serialisability level.
         """
         cursor = self._get_connection().cursor()
+        if cursor.execute("SHOW variables WHERE Variable_Name='default_storage_engine';"):
+            engine_var = 'default_storage_engine'
+        else:
+            engine_var = 'storage_engine'
         if self._has_setting('STORAGE_ENGINE') and self._get_setting('STORAGE_ENGINE'):
-            cursor.execute("SET storage_engine=%s;" % self._get_setting('STORAGE_ENGINE'))
+            cursor.execute("SET %s=%s;" % (engine_var, self._get_setting('STORAGE_ENGINE')))
 
     def start_transaction(self):
         super(DatabaseOperations, self).start_transaction()
