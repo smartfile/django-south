@@ -37,13 +37,16 @@ def copy_column_constraints(func):
     def _column_cp(self, table_name, column_old, column_new, *args, **opts):
         # Copy foreign key constraint
         try:
-            constraint = self._find_foreign_constraints(table_name, column_old)[0]
-            (ftable, fcolumn) = self._lookup_constraint_references(table_name, constraint)
-            if ftable and fcolumn:
-                fk_sql = self.foreign_key_sql(
-                            table_name, column_new, ftable, fcolumn)
-                get_logger().debug("Foreign key SQL: " + fk_sql)
-                self.add_deferred_sql(fk_sql)
+            constraint = self._find_foreign_constraints(
+                table_name, column_old)[0]
+            refs = self._lookup_constraint_references(table_name, constraint)
+            if refs is not None:
+                (ftable, fcolumn) = refs
+                if ftable and fcolumn:
+                    fk_sql = self.foreign_key_sql(
+                        table_name, column_new, ftable, fcolumn)
+                    get_logger().debug("Foreign key SQL: " + fk_sql)
+                    self.add_deferred_sql(fk_sql)
         except IndexError:
             pass  # No constraint exists so ignore
         except DryRunError:
