@@ -14,6 +14,7 @@ Currently, South supports:
  - SQLite
  - Microsoft SQL Server (beta support)
  - Oracle (alpha support)
+ - Firebird (beta support)   
 
 
 .. _accessing-the-api:
@@ -66,6 +67,11 @@ all database backends.
  - Oracle is a new module as of the 0.7 release, and so is very much alpha.
    The most common operations work, but others may be missing completely;
    we welcome bug reports and patches against it (as with all other modules).
+
+ - Firebird almost all features are supported but need more tests. 
+   Renames table is not supported by firebird, this involve recreate all related 
+   objects (store procedure, views, triggers, etc).
+   Patches and bug reports are welcome.
 
 
 Methods
