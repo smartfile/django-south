@@ -81,11 +81,13 @@ class DatabaseOperations(generic.DatabaseOperations):
 
     @generic.invalidate_table_constraints
     def create_table(self, table_name, fields):
-        qn = self.quote_name(table_name)
         columns = []
         autoinc_sql = ''
 
         for field_name, field in fields:
+            # avoid default values in CREATE TABLE statements (#925)
+            field._suppress_default = True
+            
             col = self.column_sql(table_name, field_name, field)
             if not col:
                 continue
@@ -95,8 +97,11 @@ class DatabaseOperations(generic.DatabaseOperations):
                 field_name = field.db_column or field.column
                 autoinc_sql = connection.ops.autoinc_sql(table_name, field_name)
 
-        sql = 'CREATE TABLE %s (%s);' % (qn, ', '.join([col for col in columns]))
-        self.execute(sql)
+        self.execute(self.create_table_sql % {
+            "table": self.quote_name(table_name),
+            "columns": ', '.join([col for col in columns if col]),
+        })
+        
         if autoinc_sql:
             self.execute(autoinc_sql[0])
             self.execute(autoinc_sql[1])
