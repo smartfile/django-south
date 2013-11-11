@@ -900,7 +900,7 @@ class TestOperations(unittest.TestCase):
         # Test that it is pointing at the right table now
         try:
             non_user_id = db.execute("SELECT MAX(id) FROM auth_user")[0][0] + 1
-        except TypeError, IndexError:
+        except (TypeError, IndexError):
             # Got a "None" or no records, treat as 0
             non_user_id = 17
         db.execute("INSERT INTO test_fk_changed_target (eggs) VALUES (%s)", [non_user_id])
