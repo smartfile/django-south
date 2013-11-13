@@ -118,6 +118,7 @@ class DatabaseOperations(generic.DatabaseOperations):
         # We can't do that before since it's impossible to rename indexes
         # and index name scope is global
         self._make_standalone_indexes(table_name, standalone_indexes, renames=renames, deleted=deleted, uniques_deleted=uniques_deleted)
+        self.deferred_sql = [] # prevent double indexing
 
     def _copy_data(self, src, dst, field_renames={}, added={}):
         "Used to copy data into a new table"
