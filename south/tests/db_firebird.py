@@ -18,7 +18,7 @@ class FirebirdTests(unittest.TestCase):
         print('End Firebird test')
         print('=' * 80)
 
-    @skipUnless(db.backend_name == "firebird")
+    @skipUnless(db.backend_name == "firebird", "Firebird-only test")
     def test_firebird_double_index_creation_1317(self):
         """
         Tests foreign key creation, especially uppercase (see #61)
