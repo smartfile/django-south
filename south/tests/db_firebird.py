@@ -1,7 +1,7 @@
 from django.db import models
 
 from south.db import db
-from south.tests import unittest, skipIf, skipUnless
+from south.tests import unittest, skipUnless
 
 
 class FirebirdTests(unittest.TestCase):
@@ -18,6 +18,7 @@ class FirebirdTests(unittest.TestCase):
         print('End Firebird test')
         print('=' * 80)
 
+    @skipUnless(db.backend_name == "firebird")
     def test_firebird_double_index_creation_1317(self):
         """
         Tests foreign key creation, especially uppercase (see #61)
