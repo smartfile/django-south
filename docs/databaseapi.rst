@@ -12,8 +12,8 @@ Currently, South supports:
  - PostgreSQL
  - MySQL
  - SQLite
- - Microsoft SQL Server (beta support)
- - Oracle (alpha support)
+ - Microsoft SQL Server
+ - Oracle
  - Firebird (beta support)   
 
 
@@ -38,7 +38,7 @@ defined above) for each database alias in your configuration file::
  
 You can tell which backend you're talking to inside of a migration by examining
 ``db.backend_name`` - it will be one of ``postgres``, ``mysql``, ``sqlite3``, 
-``pyodbc`` or ``oracle``.
+``pyodbc`` (for SQL Server), ``oracle`` or ``firebird``.
 
 
 Database-Specific Issues
@@ -50,24 +50,21 @@ all database backends.
  - PostgreSQL supports all of the South features; if you're unsure which database
    engine to pick, it's the one we recommend for migrating on.
 
- - MySQL doesn't have transaction support for schema modification, meaning that
-   if a migration fails to apply, the database is left in an inconsistent state,
-   and you'll probably have to manually fix it. South will try and sanity-check
-   migrations in a dry-run phase, and give you hints of what to do when it
-   fails, however.
+ - MySQL and Oracle don't have transaction support for schema modification, 
+   meaning that if a migration fails to apply, the database is left in an 
+   inconsistent state, and you'll probably have to manually fix it. South will
+   try and sanity-check migrations in a dry-run phase, and give you hints of 
+   what to do when it fails, however.
 
  - SQLite doesn't natively support much schema altering at all, but South
    has workarounds to allow deletion/altering of columns. Unique indexes are
    still unsupported, however; South will silently ignore any such commands.
  
- - SQL Server has been supported for a while, and works in theory, but the
-   implementation itself may have bugs, as it's a contributed module and isn't
-   under primary development. Patches and bug reports are welcome.
+ - SQL Server has been supported for a while, and works quite well, but it is
+   not supported in Django core, and has at least three competing Django 
+   backends. As South builds on the Django backend, this means things may be 
+   a little brittle. Patches and bug reports are welcome.
  
- - Oracle is a new module as of the 0.7 release, and so is very much alpha.
-   The most common operations work, but others may be missing completely;
-   we welcome bug reports and patches against it (as with all other modules).
-
  - Firebird almost all features are supported but need more tests. 
    Renames table is not supported by firebird, this involve recreate all related 
    objects (store procedure, views, triggers, etc).
@@ -96,18 +93,15 @@ db.add_column
 Adds a column called ``field_name`` to the table ``table_name``, of the type
 specified by the field instance field.
 
-If ``keep_default`` is True, then any default value specified on the field will
-be added to the database schema for that column permanently. If not, then the
-default is only used when adding the column, and then dropped afterwards.
+``keep_default`` used to mean that any default value specified on the field will
+be added to the database schema for that column permanently. However, since
+South 0.8, the default is only used when adding the column, and then dropped
+afterwards. The argument was kept for backwards-compatibility.
 
 Note that the default value for fields given here is only ever used when
 adding the column to a non-empty table; the default used by the ORM in your
 application is the one specified on the field in your models.py file, as Django
 handles adding default values before the query hits the database.
-
-The only case where having the default stored in the database as well would make
-a difference would be where you are interacting with the database from somewhere
-else, or Django doesn't know about the added column at all.
 
 Also, note that the name you give for the column is the **field name**, not the
 column name - if the field you pass in is a ForeignKey, for example, the
@@ -126,12 +120,6 @@ Providing a default value instead, so all current rows will get this value for
 
  db.add_column('core_profile', 'height', models.IntegerField(default=-1))
 
-Same as above, but the default is not left in the database schema::
-
- db.add_column('core_profile', 'height', models.IntegerField(default=-1), keep_default=False)
-
-
-
 db.alter_column
 ^^^^^^^^^^^^^^^
 
@@ -145,7 +133,7 @@ you want to make a field ``unique=True``, you should instead use
 ``db.create_unique``, and if you want to make it a primary
 key, you should look into ``db.drop_primary_key`` and ``db.create_primary_key``.
 
-If explicit_name is false, ForeignKey? fields will have _id appended to the end
+If explicit_name is false, ForeignKey fields will have _id appended to the end
 of the given column name - this lets you address fields as they are represented
 in the model itself, rather than as the column name.
 
@@ -161,7 +149,7 @@ We can also change it to a compatible field type::
 
  db.alter_column('core_nation', 'name', models.TextField())
 
-If we have a ForeignKey? named 'user', we can address it without the implicit '_id' on the end::
+If we have a ForeignKey named 'user', we can address it without the implicit '_id' on the end::
 
  db.alter_column('core_profile', 'user', models.ForeignKey(orm['auth.User'], null=True, blank=True), explicit_name=False)
 
