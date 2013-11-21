@@ -9,7 +9,6 @@ import traceback
 from django.core.management import call_command
 from django.core.management.commands import loaddata
 from django.db import models
-from django.conf import settings
 
 import south.db
 from south import exceptions
@@ -17,7 +16,6 @@ from south.db import DEFAULT_DB_ALIAS
 from south.models import MigrationHistory
 from south.signals import ran_migration
 from south.utils.py3 import StringIO
-from south.hacks import hacks
 
 
 class Migrator(object):
@@ -219,11 +217,15 @@ class LoadInitialDataMigrator(MigratorWrapper):
             print(" - Loading initial data for %s." % target.app_label())
         # Override Django's get_apps call temporarily to only load from the
         # current app
-        hacks.set_installed_apps([ia for ia in settings.INSTALLED_APPS if ia.split(".")[-1] == target.app_label()], preserve_models=True)
+        old_get_apps = models.get_apps
+        new_get_apps = lambda: [models.get_app(target.app_label())]
+        models.get_apps = new_get_apps
+        loaddata.get_apps = new_get_apps
         try:
             call_command('loaddata', 'initial_data', verbosity=self.verbosity, database=db)
         finally:
-            hacks.reset_installed_apps()
+            models.get_apps = old_get_apps
+            loaddata.get_apps = old_get_apps
 
     def migrate_many(self, target, migrations, database):
         migrator = self._migrator
