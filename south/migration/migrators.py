@@ -16,7 +16,7 @@ from south import exceptions
 from south.db import DEFAULT_DB_ALIAS
 from south.models import MigrationHistory
 from south.signals import ran_migration
-from south.utils.py3 import StringIO
+from south.utils.py3 import StringIO, iteritems
 
 
 class Migrator(object):
@@ -161,7 +161,7 @@ class DryRunMigrator(MigratorWrapper):
             if self.verbosity:
                 print(" - Migration '%s' is marked for no-dry-run." % migration)
             return
-        for name, db in south.db.dbs.iteritems():
+        for name, db in iteritems(south.db.dbs):
             south.db.dbs[name].dry_run = True
         # preserve the constraint cache as it can be mutated by the dry run
         constraint_cache = deepcopy(south.db.db._constraint_cache)
@@ -181,7 +181,7 @@ class DryRunMigrator(MigratorWrapper):
             if self._ignore_fail:
                 south.db.db.debug = old_debug
             south.db.db.clear_run_data(pending_creates)
-            for name, db in south.db.dbs.iteritems():
+            for name, db in iteritems(south.db.dbs):
                 south.db.dbs[name].dry_run = False
             # restore the preserved constraint cache from before dry run was
             # executed
