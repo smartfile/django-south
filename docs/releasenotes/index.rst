@@ -18,3 +18,4 @@ Release notes from various versions of South.
    0.8.2
    0.8.3
    0.8.4
+   1.0

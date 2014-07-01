@@ -4,13 +4,12 @@
 Installation
 ============
 
-South's current release is :ref:`0.8.4 <0-8-4-release-notes>`.
+South's current release is :ref:`1.0 <1-0-release-notes>`.
 
 There are a few different ways to install South:
 
- - :ref:`Using easy_install <installation-easy-install>` (or pip), which is recommended if you want stable releases.
+ - :ref:`Using pip or easy_install <installation-easy-install>`, which is recommended if you want stable releases.
  - :ref:`Using a Mercurial checkout <installation-mercurial>`, recommended if you want cutting-edge features.
- - :ref:`Using our downloadable archives <installation-archives>`, useful if you don't have easy_install or Mercurial.
  
 Some Linux distributions are also starting to include South in their package
 repositories; if you're running unstable Debian you can
@@ -26,14 +25,22 @@ release you are using for further detail.
 
 .. _installation-easy-install:
  
-Using easy_install
-------------------
+Using pip or easy_install
+-------------------------
 
-If you have easy_install available on your system, just type::
+If you have pip or easy_install available on your system, just type::
+
+ pip install South
+
+ # or
 
  easy_install South
  
 If you've already got an old version of South, and want to upgrade, use::
+
+ pip install -U South
+
+ # or
 
  easy_install -U South
  
@@ -66,21 +73,6 @@ To update an existing Mercurial checkout to the newest version, run::
 manually set on reasonably stable trunk commits, or pick a version number tag.)
 
 Once you have this directory, move onto :ref:`installation-from-directory`.
-
-
-.. _installation-archives:
-
-Using downloadable archives
----------------------------
-
-If you're averse to using Mercurial, and don't have easy_install available, then
-you can install from one of our ``.tar.gz`` files.
-
-First, download the archive of your choice from
-`our releases page <http://aeracode.org/releases/south>`_, and extract it to
-create a ``south`` folder. Then, proceed with our instructions for
-:ref:`installation-from-directory`.
-
 
 
 .. _installation-from-directory:
