@@ -157,7 +157,7 @@ class Migrations(with_metaclass(MigrationsMetaclass, list)):
         Imports the migrations module object, and throws a paddy if it can't.
         """
         self._application = application
-        if not hasattr(application, 'migrations'):
+        if not hasattr(application, 'migrations') and not hasattr(application, 'south_migrations'):
             try:
                 module = importlib.import_module(self.migrations_module())
                 self._migrations = application.migrations = module
@@ -168,7 +168,10 @@ class Migrations(with_metaclass(MigrationsMetaclass, list)):
                     self._migrations = application.migrations = module
                 else:
                     raise exceptions.NoMigrations(application)
-        self._load_migrations_module(application.migrations)
+        if hasattr(application, 'south_migrations'):
+            self._load_migrations_module(application.south_migrations)
+        else:
+            self._load_migrations_module(application.migrations)
 
     application = property(get_application, set_application)
 
