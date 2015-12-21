@@ -43,7 +43,17 @@ class Command(BaseCommand):
         # --stdout means name = -
         if stdout:
             name = "-"
-	
+
+	    warning_message = "South does not handle SET_CALL for on_deletes. " \
+                          "Instead the value will be set to NULL. If you " \
+                          "do not want the foreign key to be NULL and " \
+                          "your a working with a foreign key that uses " \
+                          "on_delete=SET_CALL you will need to manually " \
+                          "set the new foreign key yourself. If the foreign " \
+                          "key field does not allow NULL values and you do " \
+                          "not handle this yourself the migration will fail."
+        print(warning_message, file=sys.stderr)
+
         # Only allow valid names
         if re.search('[^_\w]', name) and name != "-":
             self.error("Migration names should contain only alphanumeric characters and underscores.")

@@ -47,7 +47,7 @@ def convert_on_delete_handler(value):
                     return "%s.SET_NULL" % (django_db_models_module)
                 # simple function we can perhaps cope with:
                 elif hasattr(closure_contents, '__call__'):
-                    raise ValueError("South does not support on_delete with SET(function) as values.")
+                    return "%s.SET_NULL" % (django_db_models_module)
                 else:
                     # Attempt to serialise the value
                     return "%s.SET(%s)" % (django_db_models_module, value_clean(closure_contents))
