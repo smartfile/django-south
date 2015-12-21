@@ -44,7 +44,7 @@ class Command(BaseCommand):
         if stdout:
             name = "-"
 
-	    warning_message = "South does not handle SET_CALL for on_deletes. " \
+        warning_message = "South does not handle SET_CALL for on_deletes. " \
                           "Instead the value will be set to NULL. If you " \
                           "do not want the foreign key to be NULL and " \
                           "your a working with a foreign key that uses " \
