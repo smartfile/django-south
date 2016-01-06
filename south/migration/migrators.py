@@ -213,15 +213,7 @@ class FakeMigrator(MigratorWrapper):
 class LoadInitialDataMigrator(MigratorWrapper):
 
     def load_initial_data(self, target, db='default'):
-        if target is None or target != target.migrations[-1]:
-            return
-        # Load initial data, if we ended up at target
-        if self.verbosity:
-            print(" - Loading initial data for %s." % target.app_label())
-        if DJANGO_VERSION < (1, 6):
-            self.pre_1_6(target, db)
-        else:
-            self.post_1_6(target, db)
+        pass
 
     def pre_1_6(self, target, db):
         # Override Django's get_apps call temporarily to only load from the
